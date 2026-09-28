@@ -39,5 +39,32 @@ app.get('/api/usuarios/perfil', verificarToken, async (req, res) => {
   }
 });
 
+app.use('/api/documentos', verificarToken, async (req, res) => {
+  try {
+    const response = await axios({
+      method: req.method,
+      url: `${process.env.DOCUMENTOS_URL}/api/documentos${req.url}`,
+      data: ['GET', 'HEAD'].includes(req.method) ? undefined : req.body,
+    });
+    res.status(response.status).json(response.data);
+  } catch (err) {
+    res.status(err.response?.status || 500).json(err.response?.data || { error: 'Error en el gateway' });
+  }
+});
+
+app.use('/api/consultas', verificarToken, async (req, res) => {
+  try {
+    const response = await axios({
+      method: req.method,
+      url: `${process.env.CONSULTAS_URL}/api/consultas${req.url}`,
+      data: ['GET', 'HEAD'].includes(req.method) ? undefined : req.body,
+      headers: { usuarioId: req.usuario.id },
+    });
+    res.status(response.status).json(response.data);
+  } catch (err) {
+    res.status(err.response?.status || 500).json(err.response?.data || { error: 'Error en el gateway' });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`API Gateway corriendo en puerto ${PORT}`));
