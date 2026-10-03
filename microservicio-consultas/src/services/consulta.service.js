@@ -3,6 +3,7 @@ const repo = require('../repositories/consulta.repository');
 
 async function procesarPregunta({ usuarioId, pregunta }) {
   if (!pregunta) throw new Error('La pregunta es obligatoria');
+  if (!Number.isInteger(Number(usuarioId))) throw new Error('El usuario es obligatorio');
 
   let respuesta = 'No encontré información relacionada. Intenta reformular tu pregunta.';
 
@@ -19,18 +20,12 @@ async function procesarPregunta({ usuarioId, pregunta }) {
     console.error('No se pudo consultar MS Documentos:', err.message);
   }
 
-  const consulta = repo.crear({
-    usuarioId: Number(usuarioId),
-    pregunta,
-    respuesta,
-    fecha: new Date().toISOString(),
-  });
-
-  return consulta;
+  return await repo.crear({ usuarioId: Number(usuarioId), pregunta, respuesta });
 }
 
-function historial(usuarioId) {
-  return repo.historialPorUsuario(usuarioId);
+async function historial(usuarioId) {
+  if (!Number.isInteger(Number(usuarioId))) throw new Error('Usuario no válido');
+  return await repo.historialPorUsuario(Number(usuarioId));
 }
 
 module.exports = { procesarPregunta, historial };
