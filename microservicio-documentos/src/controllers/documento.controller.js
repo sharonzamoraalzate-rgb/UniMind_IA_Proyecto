@@ -1,21 +1,25 @@
 const service = require('../services/documento.service');
 
-function crear(req, res) {
+async function crear(req, res) {
   try {
-    const documento = service.crear(req.body);
+    const documento = await service.crear(req.body);
     res.status(201).json(documento);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 }
 
-function listar(req, res) {
-  res.json(service.listarTodos());
+async function listar(req, res) {
+  try {
+    res.json(await service.listarTodos());
+  } catch (err) {
+    res.status(500).json({ error: 'Error al consultar la base de datos' });
+  }
 }
 
-function obtenerPorId(req, res) {
+async function obtenerPorId(req, res) {
   try {
-    const documento = service.obtenerPorId(req.params.id);
+    const documento = await service.obtenerPorId(req.params.id);
     res.json(documento);
   } catch (err) {
     res.status(404).json({ error: err.message });

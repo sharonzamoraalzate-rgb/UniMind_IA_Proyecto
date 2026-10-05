@@ -18,9 +18,9 @@ async function login(req, res) {
   }
 }
 
-function perfil(req, res) {
+async function perfil(req, res) {
   try {
-    const usuario = service.perfil(req.usuario.id);
+    const usuario = await service.perfil(req.usuario.id);
     res.json(usuario);
   } catch (err) {
     res.status(404).json({ error: err.message });
