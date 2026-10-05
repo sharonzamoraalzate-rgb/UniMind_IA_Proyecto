@@ -1,0 +1,24 @@
+CREATE TABLE IF NOT EXISTS usuarios (
+  id SERIAL PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  correo VARCHAR(150) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  rol VARCHAR(50) DEFAULT 'estudiante',
+  creado_en TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS documentos (
+  id SERIAL PRIMARY KEY,
+  titulo VARCHAR(200) NOT NULL,
+  contenido TEXT NOT NULL,
+  categoria VARCHAR(100) DEFAULT 'general',
+  creado_en TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS consultas (
+  id SERIAL PRIMARY KEY,
+  usuario_id INTEGER NOT NULL,
+  pregunta TEXT NOT NULL,
+  respuesta TEXT NOT NULL,
+  fecha TIMESTAMP DEFAULT NOW()
+);

@@ -10,8 +10,12 @@ async function crearConsulta(req, res) {
   }
 }
 
-function historial(req, res) {
-  res.json(service.historial(req.params.usuarioId));
+async function historial(req, res) {
+  try {
+    res.json(await service.historial(req.params.usuarioId));
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 }
 
 module.exports = { crearConsulta, historial };

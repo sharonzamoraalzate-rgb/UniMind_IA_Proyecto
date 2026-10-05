@@ -1,17 +1,28 @@
-const { documentos, siguienteId } = require('../models/documento.model');
+const pool = require('../db');
 
-function crear(documento) {
-  documento.id = siguienteId();
-  documentos.push(documento);
-  return documento;
+async function crear({ titulo, contenido, categoria }) {
+  const { rows } = await pool.query(
+    `INSERT INTO documentos (titulo, contenido, categoria)
+     VALUES ($1, $2, $3)
+     RETURNING id, titulo, contenido, categoria`,
+    [titulo, contenido, categoria]
+  );
+  return rows[0];
 }
 
-function listarTodos() {
-  return documentos;
+async function listarTodos() {
+  const { rows } = await pool.query(
+    'SELECT id, titulo, contenido, categoria FROM documentos ORDER BY id'
+  );
+  return rows;
 }
 
-function buscarPorId(id) {
-  return documentos.find(d => d.id === Number(id));
+async function buscarPorId(id) {
+  const { rows } = await pool.query(
+    'SELECT id, titulo, contenido, categoria FROM documentos WHERE id = $1',
+    [id]
+  );
+  return rows[0];
 }
 
 module.exports = { crear, listarTodos, buscarPorId };

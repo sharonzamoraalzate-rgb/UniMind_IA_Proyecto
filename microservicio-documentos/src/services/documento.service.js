@@ -1,18 +1,19 @@
 const repo = require('../repositories/documento.repository');
 
-function crear({ titulo, contenido, categoria }) {
+async function crear({ titulo, contenido, categoria }) {
   if (!titulo || !contenido) {
     throw new Error('El título y el contenido son obligatorios');
   }
-  return repo.crear({ titulo, contenido, categoria: categoria || 'general' });
+  return await repo.crear({ titulo, contenido, categoria: categoria || 'general' });
 }
 
-function listarTodos() {
-  return repo.listarTodos();
+async function listarTodos() {
+  return await repo.listarTodos();
 }
 
-function obtenerPorId(id) {
-  const documento = repo.buscarPorId(id);
+async function obtenerPorId(id) {
+  if (!Number.isInteger(Number(id))) throw new Error('Documento no encontrado');
+  const documento = await repo.buscarPorId(Number(id));
   if (!documento) throw new Error('Documento no encontrado');
   return documento;
 }
