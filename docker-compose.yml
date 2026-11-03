@@ -13,5 +13,77 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
 
+  gateway:
+    build: ./gateway
+    image: jjagudelo64/unimind-gateway:latest
+    container_name: unimind_gateway
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      JWT_SECRET: una_clave_secreta_larga
+      USUARIOS_URL: http://usuarios:3001
+      DOCUMENTOS_URL: http://documentos:3002
+      CONSULTAS_URL: http://consultas:3003
+    depends_on:
+      - usuarios
+      - documentos
+      - consultas
+    restart: on-failure
+
+  usuarios:
+    build: ./microservicio-usuarios
+    image: jjagudelo64/unimind-usuarios:latest
+    container_name: unimind_usuarios
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      JWT_SECRET: una_clave_secreta_larga
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: unimind
+      DB_PASSWORD: unimind123
+      DB_NAME: unimind
+    depends_on:
+      - db
+    restart: on-failure
+
+  documentos:
+    build: ./microservicio-documentos
+    image: jjagudelo64/unimind-documentos:latest
+    container_name: unimind_documentos
+    ports:
+      - "3002:3002"
+    environment:
+      PORT: 3002
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: unimind
+      DB_PASSWORD: unimind123
+      DB_NAME: unimind
+    depends_on:
+      - db
+    restart: on-failure
+
+  consultas:
+    build: ./microservicio-consultas
+    image: jjagudelo64/unimind-consultas:latest
+    container_name: unimind_consultas
+    ports:
+      - "3003:3003"
+    environment:
+      PORT: 3003
+      DOCUMENTOS_URL: http://documentos:3002
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: unimind
+      DB_PASSWORD: unimind123
+      DB_NAME: unimind
+    depends_on:
+      - db
+      - documentos
+    restart: on-failure
+
 volumes:
   pgdata:
